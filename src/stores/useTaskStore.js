@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import api from '../lib/axios';
+import toast from 'react-hot-toast';
 
 export const useTaskStore = create((set, get) => ({
   tasks: [],
@@ -12,7 +13,9 @@ export const useTaskStore = create((set, get) => ({
       const res = await api.get('/tasks');
       set({ tasks: res.data, isLoading: false });
     } catch (err) {
-      set({ error: err.response?.data?.message || 'Failed to get tasks', isLoading: false });
+      const msg = err.response?.data?.message || 'Failed to get tasks';
+      set({ error: msg, isLoading: false });
+      toast.error(msg);
     }
   },
 
@@ -21,8 +24,11 @@ export const useTaskStore = create((set, get) => ({
     try {
       const res = await api.post('/tasks', taskData);
       set((state) => ({ tasks: [...state.tasks, res.data], isLoading: false }));
+      toast.success('Task created successfully');
     } catch (err) {
-      set({ error: err.response?.data?.message || 'Failed to create task', isLoading: false });
+      const msg = err.response?.data?.message || 'Failed to create task';
+      set({ error: msg, isLoading: false });
+      toast.error(msg);
     }
   },
 
@@ -34,8 +40,11 @@ export const useTaskStore = create((set, get) => ({
         tasks: state.tasks.map((task) => (task._id === id ? res.data : task)),
         isLoading: false
       }));
+      toast.success('Task updated');
     } catch (err) {
-      set({ error: err.response?.data?.message || 'Failed to update task', isLoading: false });
+      const msg = err.response?.data?.message || 'Failed to update task';
+      set({ error: msg, isLoading: false });
+      toast.error(msg);
     }
   },
 
@@ -47,8 +56,11 @@ export const useTaskStore = create((set, get) => ({
         tasks: state.tasks.filter((task) => task._id !== id),
         isLoading: false
       }));
+      toast.success('Task deleted');
     } catch (err) {
-      set({ error: err.response?.data?.message || 'Failed to delete task', isLoading: false });
+      const msg = err.response?.data?.message || 'Failed to delete task';
+      set({ error: msg, isLoading: false });
+      toast.error(msg);
     }
   }
 }));

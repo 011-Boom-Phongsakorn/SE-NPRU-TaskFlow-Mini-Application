@@ -1,16 +1,39 @@
-# React + Vite
+# 💻 TaskFlow Mini - ระบบหน้าบ้าน (Frontend Client)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+แอปพลิเคชันรูปแบบใหม่ที่สร้างด้วย React 19 โดยใช้งานผ่านเครื่องมือ Vite พร้อมจัดสไตล์ Tailwind CSS อย่างลงตัว
 
-Currently, two official plugins are available:
+## 🛠️ โครงสร้างเทคโนโลยี (Tech Stack)
+- **React 19 + Vite:** สภาพแวดล้อมที่รวดเร็วสำหรับการสร้างหน้าต่างรับรองผู้ใช้งาน 
+- **Tailwind CSS v4:** ใช้เขียนสไตล์เว็บแอป พร้อมตั้งค่าสำหรับการสลับดีไซน์โหมดมืด (Dark mode)
+- **Zustand:** โปรแกรมจัดการ State กลางข้อมูลทั่วทั้งระบบในรูปแบบที่เบาและเข้าถึงง่าย
+- **React Router DOM:** สำหรับการจัดการเส้นทาง URL การคลิกเชื่อมหน้าของ User
+- **Recharts:** ระบบกราฟแสดงผลโต้ตอบ (Interactive) เพื่อใช้วิเคราะห์การทำงานของผู้ใช้งาน
+- **gantt-task-react:** คอมโพเนนต์ที่ใช้เจาะจงสำหรับการวาดระบบมุมมองหน้า Timeframe (Gantt Chart)
+- **shadcn/ui & Lucide React:** รวมไอคอนและรูปแบบ Component สำเร็จรูปสวยๆ ที่จัดการได้ง่าย
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📝 การตั้งค่าตัวแปร (Environment Variables - `.env`)
+คุณต้องทำการสร้างไฟล์ `.env` ไว้ในโฟลเดอร์ `client` โดยใช้ไฟล์ `.env.example` เป็นตัวต้นแบบ:
 
-## React Compiler
+```env
+# ตำแหน่ง URL แบบเจาะจงที่มีเป้าหมายเป็น NodeJS Backend API
+VITE_API_URL=http://localhost:5000/api
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 การติดตั้งและเปิดทดสอบ (Installation & Running)
 
-## Expanding the ESLint configuration
+1. **เปิดไปที่ฝั่ง Frontend:** `cd client`
+2. **ติดตั้งส่วนขยาย:** เนื่องจากไลบรารีของ Gantt chart มีเงื่อนไขการทำงานบางส่วนกับ React 19 แนะนำให้ใส่คีย์วอร์ดพ่วงตอนโหลด:
+   ```bash
+   npm install --legacy-peer-deps
+   ```
+3. **เปิดระบบประมวลผลเซิร์ฟเวอร์จำลอง (Dev Env):**
+   ```bash
+   npm run dev
+   ```
+*(ระบบพัฒนาโปรเจกต์จะเริ่มประมวลผลผ่านเว็บไซต์ `http://localhost:5173`)*
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🏗️ สร้างระบบสำหรับการใช้งานจริง (Production Build)
+```bash
+npm run build
+```
+*(ถ้าต้องการตระเตรียมการนำไปจำลองลงบน Cloud Deploy Platform อย่าง Vercel หรือ Netlify คุณต้องแน่ใจว่าได้ระบุ Environment Variable เป็น (`VITE_API_URL`) บนแผงจัดการตัวแปรฝั่งเซิร์ฟเวอร์เว็บของเขาด้วย และถ้าเจอปัญหา Build Error อย่าลืมฝังไฟล์ตระกูล `.npmrc` เพื่อแก้ไขเรื่อง Version Conflicts ครับ)*

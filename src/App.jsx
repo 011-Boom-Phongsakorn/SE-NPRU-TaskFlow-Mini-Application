@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useAuthStore } from './stores/useAuthStore';
 import { useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -21,6 +22,7 @@ function App() {
 
   return (
     <Router>
+      <Toaster position="bottom-right" toastOptions={{ style: { background: 'hsl(var(--card))', color: 'hsl(var(--card-foreground))', border: '1px solid hsl(var(--border))' } }} />
       <div className="dark min-h-screen bg-background text-foreground flex flex-col">
         <header className="p-4 px-6 border-b border-border flex justify-between items-center bg-card shadow-sm shrink-0">
           <Link to="/" className="text-xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity">TaskFlow Mini</Link>

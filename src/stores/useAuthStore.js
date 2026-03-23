@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import api from '../lib/axios';
+import toast from 'react-hot-toast';
 
 export const useAuthStore = create((set) => ({
   user: null,
@@ -13,9 +14,12 @@ export const useAuthStore = create((set) => ({
       const res = await api.post('/auth/login', { username, password });
       localStorage.setItem('token', res.data.token);
       set({ user: res.data, token: res.data.token, isLoading: false });
+      toast.success(`Welcome back, ${res.data.username}!`);
       return true;
     } catch (err) {
-      set({ error: err.response?.data?.message || 'Login failed', isLoading: false });
+      const msg = err.response?.data?.message || 'Login failed';
+      set({ error: msg, isLoading: false });
+      toast.error(msg);
       return false;
     }
   },
@@ -26,9 +30,12 @@ export const useAuthStore = create((set) => ({
       const res = await api.post('/auth/register', { username, password });
       localStorage.setItem('token', res.data.token);
       set({ user: res.data, token: res.data.token, isLoading: false });
+      toast.success('Registration successful!');
       return true;
     } catch (err) {
-      set({ error: err.response?.data?.message || 'Registration failed', isLoading: false });
+      const msg = err.response?.data?.message || 'Registration failed';
+      set({ error: msg, isLoading: false });
+      toast.error(msg);
       return false;
     }
   },
@@ -36,6 +43,7 @@ export const useAuthStore = create((set) => ({
   logout: () => {
     localStorage.removeItem('token');
     set({ user: null, token: null });
+    toast.success('Logged out successfully');
   },
 
   updateProfile: async (formData) => {
@@ -46,9 +54,12 @@ export const useAuthStore = create((set) => ({
       });
       localStorage.setItem('token', res.data.token);
       set({ user: res.data, token: res.data.token, isLoading: false });
+      toast.success('Profile updated successfully!');
       return true;
     } catch (err) {
-      set({ error: err.response?.data?.message || 'Profile update failed', isLoading: false });
+      const msg = err.response?.data?.message || 'Profile update failed';
+      set({ error: msg, isLoading: false });
+      toast.error(msg);
       return false;
     }
   },
