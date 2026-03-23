@@ -12,21 +12,27 @@ export default function TaskTimeline({ tasks }) {
      if (t.status === 'done') progress = 100;
      else if (t.status === 'in-progress') progress = 50;
 
-     return {
-       id: t._id,
-       name: t.title,
-       start: new Date(t.startDate),
-       end: new Date(t.endDate),
-       progress: progress,
-       type: 'task',
-       project: '',
-       styles: { 
-         backgroundColor: t.status === 'done' ? '#22c55e' : t.status === 'in-progress' ? '#3b82f6' : '#eab308',
-         progressColor: 'rgba(255,255,255,0.4)',
-         progressSelectedColor: 'rgba(255,255,255,0.6)'
+       const startD = new Date(t.startDate);
+       let endD = new Date(t.endDate);
+       if (endD.getTime() <= startD.getTime()) {
+         endD = new Date(startD.getTime() + 24 * 60 * 60 * 1000); // force at least 1 day
        }
-     };
-  });
+
+       return {
+         id: t._id,
+         name: t.title,
+         start: startD,
+         end: endD,
+         progress: progress,
+         type: 'task',
+         project: '',
+         styles: { 
+           backgroundColor: t.status === 'done' ? '#22c55e' : t.status === 'in-progress' ? '#3b82f6' : '#eab308',
+           progressColor: 'rgba(255,255,255,0.4)',
+           progressSelectedColor: 'rgba(255,255,255,0.6)'
+         }
+       };
+    });
 
   if (timedTasks.length === 0) {
     return (

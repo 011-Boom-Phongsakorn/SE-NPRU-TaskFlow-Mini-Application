@@ -122,3 +122,35 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Gantt Chart Dark Mode Overrides */
+.dark .gantt-container-custom svg {
+  background-color: hsl(var(--card));
+}
+.dark .gantt-container-custom text {
+  fill: hsl(var(--muted-foreground)) !important;
+}
+.dark .gantt-container-custom .gridRow,
+.dark .gantt-container-custom .gridTick,
+.dark .gantt-container-custom .gridRowLine {
+  stroke: hsl(var(--border)) !important;
+}
+.dark .gantt-container-custom .gridBackground {
+  fill: transparent !important;
+}
+.dark .gantt-container-custom .calendarBottomText,
+.dark .gantt-container-custom .calendarTopText {
+  fill: hsl(var(--foreground)) !important;
+}
+.dark .gantt-container-custom rect[fill="#f5f5f5"] {
+  fill: hsl(var(--secondary)) !important;
+}
+.dark .gantt-container-custom rect[fill="#fff"] {
+  fill: hsl(var(--card)) !important;
+}
+.dark .gantt-container-custom .taskListHeader,
+.dark .gantt-container-custom .taskListBody,
+.dark .gantt-container-custom .taskListNameWrapper {
+  stroke: hsl(var(--border)) !important;
+  fill: hsl(var(--card)) !important;
+}
