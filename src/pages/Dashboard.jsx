@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { format } from 'date-fns';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import { PlusCircle, Trash2, Edit } from 'lucide-react';
 import {
   Dialog,
@@ -16,10 +18,59 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
+const TaskDashboardAnalytics = ({ tasks }) => {
+  if (!tasks || tasks.length === 0) return null;
+
+  const statusData = [
+    { name: 'To Do', value: tasks.filter(t => t.status === 'todo').length },
+    { name: 'In Progress', value: tasks.filter(t => t.status === 'in-progress').length },
+    { name: 'Done', value: tasks.filter(t => t.status === 'done').length }
+  ];
+
+  const priorityData = [
+    { name: 'Low', count: tasks.filter(t => t.priority === 'low').length },
+    { name: 'Medium', count: tasks.filter(t => t.priority === 'medium').length },
+    { name: 'High', count: tasks.filter(t => t.priority === 'high').length }
+  ];
+
+  const COLORS = ['#eab308', '#3b82f6', '#22c55e'];
+
+  return (
+    <div className="grid md:grid-cols-2 gap-6 bg-card border border-border p-6 rounded-xl shadow-sm mb-6">
+      <div className="h-64 flex flex-col items-center">
+        <h3 className="font-semibold mb-2 text-muted-foreground">Tasks by Status</h3>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie data={statusData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} fill="#8884d8" paddingAngle={5} dataKey="value">
+              {statusData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="h-64 flex flex-col items-center">
+        <h3 className="font-semibold mb-2 text-muted-foreground">Tasks by Priority</h3>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={priorityData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+            <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+            <Tooltip cursor={{ fill: 'transparent' }} />
+            <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
+
 export default function Dashboard() {
   const { tasks, isLoading, error, fetchTasks, createTask, deleteTask } = useTaskStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newTask, setNewTask] = useState({ title: '', description: '', status: 'todo', priority: 'medium' });
+  const [newTask, setNewTask] = useState({ title: '', description: '', status: 'todo', priority: 'medium', startDate: '', endDate: '' });
 
   useEffect(() => {
     fetchTasks();
@@ -29,7 +80,7 @@ export default function Dashboard() {
     e.preventDefault();
     if (!newTask.title.trim()) return;
     await createTask({ ...newTask });
-    setNewTask({ title: '', description: '', status: 'todo', priority: 'medium' });
+    setNewTask({ title: '', description: '', status: 'todo', priority: 'medium', startDate: '', endDate: '' });
     setIsDialogOpen(false);
   };
 
@@ -91,6 +142,26 @@ export default function Dashboard() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
+                    <Label htmlFor="startDate">Start Time (optional)</Label>
+                    <Input 
+                      id="startDate" 
+                      type="datetime-local" 
+                      value={newTask.startDate} 
+                      onChange={(e) => setNewTask({ ...newTask, startDate: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="endDate">End Time (optional)</Label>
+                    <Input 
+                      id="endDate" 
+                      type="datetime-local" 
+                      value={newTask.endDate} 
+                      onChange={(e) => setNewTask({ ...newTask, endDate: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
                     <Label htmlFor="status">Status</Label>
                     <select
                       id="status"
@@ -136,7 +207,9 @@ export default function Dashboard() {
           <p className="text-muted-foreground">No tasks yet. Create one above to get started!</p>
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-3 items-start">
+        <>
+          <TaskDashboardAnalytics tasks={tasks} />
+          <div className="grid gap-6 md:grid-cols-3 items-start">
           {[
             { id: 'todo', title: 'To Do' },
             { id: 'in-progress', title: 'In Progress' },
@@ -170,6 +243,12 @@ export default function Dashboard() {
                               {task.priority.toUpperCase()}
                             </span>
                           </div>
+                          {(task.startDate || task.endDate) && (
+                            <div className="flex justify-between items-center text-[10px] text-muted-foreground mt-3 border-t border-border/50 pt-2">
+                              {task.startDate && <span>Start: {format(new Date(task.startDate), 'MMM d, yyyy HH:mm')}</span>}
+                              {task.endDate && <span>End: {format(new Date(task.endDate), 'MMM d, yyyy HH:mm')}</span>}
+                            </div>
+                          )}
                         </CardHeader>
                         <CardContent className="flex-1">
                           <p className="text-sm text-muted-foreground line-clamp-3">
@@ -194,7 +273,8 @@ export default function Dashboard() {
             </div>
           ))}
         </div>
-      )}
-    </div>
-  );
+      </>
+    )}
+  </div>
+);
 }

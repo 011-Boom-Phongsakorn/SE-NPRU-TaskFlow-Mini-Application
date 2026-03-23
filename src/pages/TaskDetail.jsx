@@ -51,10 +51,12 @@ export default function TaskDetail() {
       title: task.title,
       description: task.description,
       status: task.status,
-      priority: task.priority
+      priority: task.priority,
+      startDate: task.startDate || null,
+      endDate: task.endDate || null
     });
     setSaving(false);
-    navigate('/');
+    navigate('/dashboard');
   };
 
   if (loading) return <div className="p-8 text-center text-muted-foreground">Loading task details...</div>;
@@ -62,7 +64,7 @@ export default function TaskDetail() {
 
   return (
     <div className="max-w-2xl mx-auto py-8">
-      <Button variant="ghost" className="mb-6 -ml-4 hover:bg-secondary/50" onClick={() => navigate('/')}>
+      <Button variant="ghost" className="mb-6 -ml-4 hover:bg-secondary/50" onClick={() => navigate('/dashboard')}>
         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
       </Button>
 
@@ -126,7 +128,7 @@ export default function TaskDetail() {
           </form>
         </CardContent>
         <CardFooter className="flex justify-end gap-2 border-t border-border pt-6 mt-4">
-          <Button variant="outline" onClick={() => navigate('/')} type="button">Cancel</Button>
+          <Button variant="outline" onClick={() => navigate('/dashboard')} type="button">Cancel</Button>
           <Button type="submit" form="task-form" disabled={saving} className="bg-primary">
             <Save className="mr-2 h-4 w-4" /> {saving ? 'Saving...' : 'Save Changes'}
           </Button>
