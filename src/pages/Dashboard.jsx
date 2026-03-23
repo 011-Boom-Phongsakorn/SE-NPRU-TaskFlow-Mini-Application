@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
-import { PlusCircle, Trash2, Edit } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, AlignLeft, CalendarRange } from 'lucide-react';
+import TaskTimeline from '../components/TaskTimeline';
 import {
   Dialog,
   DialogContent,
@@ -71,6 +72,7 @@ export default function Dashboard() {
   const { tasks, isLoading, error, fetchTasks, createTask, deleteTask } = useTaskStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newTask, setNewTask] = useState({ title: '', description: '', status: 'todo', priority: 'medium', startDate: '', endDate: '' });
+  const [displayMode, setDisplayMode] = useState('board');
 
   useEffect(() => {
     fetchTasks();
@@ -209,7 +211,18 @@ export default function Dashboard() {
       ) : (
         <>
           <TaskDashboardAnalytics tasks={tasks} />
-          <div className="grid gap-6 md:grid-cols-3 items-start">
+          
+          <div className="flex justify-end gap-2 mb-4">
+            <Button variant={displayMode === 'board' ? 'default' : 'outline'} size="sm" onClick={() => setDisplayMode('board')} className="shadow-sm">
+              <AlignLeft className="mr-2 h-4 w-4" /> Board
+            </Button>
+            <Button variant={displayMode === 'timeline' ? 'default' : 'outline'} size="sm" onClick={() => setDisplayMode('timeline')} className="shadow-sm">
+              <CalendarRange className="mr-2 h-4 w-4" /> Timeline
+            </Button>
+          </div>
+
+          {displayMode === 'board' ? (
+            <div className="grid gap-6 md:grid-cols-3 items-start">
           {[
             { id: 'todo', title: 'To Do' },
             { id: 'in-progress', title: 'In Progress' },
@@ -273,6 +286,9 @@ export default function Dashboard() {
             </div>
           ))}
         </div>
+        ) : (
+          <TaskTimeline tasks={tasks} />
+        )}
       </>
     )}
   </div>
